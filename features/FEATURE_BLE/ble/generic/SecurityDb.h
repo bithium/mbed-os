@@ -1,6 +1,8 @@
 /* mbed Microcontroller Library
  * Copyright (c) 2018 ARM Limited
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -425,6 +427,31 @@ public:
         _local_sign_counter = sign_counter;
     }
 
+    /* local identity */
+    /**
+     * Update the local identity.
+     *
+     * @param[in] csrk new CSRK value
+     */
+    virtual void set_local_identity(
+            const irk_t &irk,
+            const address_t &identity_address,
+            bool public_address
+    )  {
+        _local_identity.irk = irk;
+        _local_identity.identity_address = identity_address;
+        _local_identity.identity_address_is_public = public_address;
+    }
+
+    /**
+     * Return local irk.
+     *
+     * @return irk
+     */
+    virtual irk_t get_local_irk() {
+        return _local_identity.irk;
+    }
+
     /* list management */
 
     /**
@@ -592,6 +619,21 @@ public:
                 continue;
             }
 
+            // Add the connection address
+            whitelist->addresses[whitelist->size].address = flags->peer_address.data();
+
+            if (flags->peer_address_is_public) {
+                whitelist->addresses[whitelist->size].type = peer_address_type_t::PUBLIC;
+            } else {
+                whitelist->addresses[whitelist->size].type = peer_address_type_t::RANDOM;
+            }
+
+            whitelist->size++;
+            if (whitelist->size == whitelist->capacity) {
+                break;
+            }
+
+            // Add the identity address
             SecurityEntryIdentity_t* identity = read_in_entry_peer_identity(db_handle);
             if (!identity) {
                 continue;
@@ -710,7 +752,7 @@ private:
 
     /**
      * This will read in the requested information into a buffer that will remain valid
-     * until another read_in call is made.
+     * until another read_in call is made or an entry is written.
      * @param db_handle handle of the entry to be read
      * @return pointer to buffer holding the query result, NULL when not found
      */
@@ -718,7 +760,7 @@ private:
 
     /**
      * This will read in the requested information into a buffer that will remain valid
-     * until another read_in call is made.
+     * until another read_in call is made or an entry is written.
      * @param db_handle handle of the entry to be read
      * @return pointer to buffer holding the query result, NULL when not found
      */
@@ -726,7 +768,7 @@ private:
 
     /**
      * This will read in the requested information into a buffer that will remain valid
-     * until another read_in call is made.
+     * until another read_in call is made or an entry is written.
      * @param db_handle handle of the entry to be read
      * @return pointer to buffer holding the query result, NULL when not found
      */
@@ -734,7 +776,7 @@ private:
 
     /**
      * This will read in the requested information into a buffer that will remain valid
-     * until another read_in call is made.
+     * until another read_in call is made or an entry is written.
      * @param db_handle handle of the entry to be read
      * @return pointer to buffer holding the query result, NULL when not found
      */

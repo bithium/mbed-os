@@ -5,6 +5,7 @@
         "utest",
         "unity",
         "psa",
+        "psa-services",
         "mbedtls",
         "psa-compliance-framework",
         "filesystem",
@@ -32,6 +33,7 @@
         "kv-global-api",
         "sd",
         "qspif",
+        "spif-driver",
         "cryptocell310",
         "drivers-usb"
     ],

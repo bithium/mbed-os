@@ -1,6 +1,8 @@
 /* mbed Microcontroller Library
  * Copyright (c) 2018 ARM Limited
  *
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -122,6 +124,10 @@ public:
 
     ble_error_t setPairingRequestAuthorisation_(
         bool required = true
+    );
+
+    ble_error_t getPeerIdentity_(
+        connection_handle_t connection
     );
 
     ////////////////////////////////////////////////////////////////////////////
@@ -320,6 +326,13 @@ private:
      * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
      */
     ble_error_t init_signing();
+
+    /**
+     * Generate the IRK if needed.
+     *
+     * @return BLE_ERROR_NONE or appropriate error code indicating the failure reason.
+     */
+    ble_error_t init_identity();
 
     /**
      * Fills the buffer with the specified number of bytes of random data
